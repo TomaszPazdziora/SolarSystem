@@ -1,10 +1,16 @@
 #include "init.h"
 
-extern int receivedAngle;
+// all delays will be changed
+#define TRACKING_DELAY 1000 * 5
+#define DATABASE_DELAY 1000 * 15
+#define POWER_BATTERIES_DELAY 1000 * 10
+#define MPPT_DELAY 1000 * 10
+
+// extern int receivedAngle;
 
 /*--------------- TASKS DECLARATION ---------------*/
 
-void updateAngle(void *pvParameters);
-void sendData(void *pvParameters);
-
-
+void Tracking(void *pvParameters);
+void Database(void *pvParameters);
+// void PowerBatteries(void *pvParameters);
+// void MPPT(void *pvParameters);
