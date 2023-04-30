@@ -4,28 +4,10 @@
 
 void Tracking(void *pvParameters) {
   int receivedAngle = 0;
-
-    for (;;) {
-        if ((WiFi.status() == WL_CONNECTED)) { 
-        HTTPClient http;
-
-        http.begin(url_time);
-        int httpCode = http.GET();                                        
-     
-        if (httpCode > 0) {
-            receivedAngle = http.getString().toInt();
-            Serial.println(receivedAngle);
-          }
-    
-        else {
-          Serial.println("Error on HTTP request");
-        }
-
-        http.end();
-      }
-
-      vTaskDelay(TRACKING_DELAY / portTICK_PERIOD_MS);
-    }
+  for (;;) {
+    getAngle();
+    vTaskDelay(TRACKING_DELAY / portTICK_PERIOD_MS);
+  }
 }
 
 
@@ -34,30 +16,11 @@ void Tracking(void *pvParameters) {
 
 void Database(void *pvParameters) {
   int measurment = 1;
-
-    for (;;) {
-        if (WiFi.status() == WL_CONNECTED) {
-        WiFiClient client;
-        HTTPClient http;
-
-        http.begin(client, url_measure);
-        http.addHeader("Content-Type", "text/plain");
-
-        int httpResponseCode = http.POST(String(measurment));
-
-        if (httpResponseCode > 0) {
-          Serial.println("POST request successful");
-        }
-        else {
-          Serial.println("Error on POST request");
-        }
-
-        http.end();
-      }
-
-      measurment++;
-      vTaskDelay(DATABASE_DELAY / portTICK_PERIOD_MS);
-    }
+  for (;;) {
+    sendToServer(measurment);
+    measurment++;
+    vTaskDelay(DATABASE_DELAY / portTICK_PERIOD_MS);
+  }
 }
 
 /*--------------- POWER BATTERIES TASK ---------------*/
