@@ -1,6 +1,5 @@
 #include "tasks.h"
 
-
 /*--------------- TRACKING TASK ---------------*/
 
 void Tracking(void *pvParameters) {
@@ -10,8 +9,6 @@ void Tracking(void *pvParameters) {
     vTaskDelay(TRACKING_DELAY / portTICK_PERIOD_MS);
   }
 }
-
-
 
 /*--------------- DATABASE TASK ---------------*/
 
@@ -26,14 +23,14 @@ void Database(void *pvParameters) {
 
 /*--------------- POWER BATTERIES TASK ---------------*/
 
-// void PowerBatteries(void *pvParameters) {
-
-//   for(;;) {
-
-//    vTaskDelay(POWER_BATTERIES_DELAY / portTICK_PERIOD_MS);
-//   }
-// }
-
+void PowerBatteries(void *pvParameters) {
+  float voltage = 0;
+  for(;;) {
+    voltage = measureBatsVolt();
+    Serial.println(voltage);
+    vTaskDelay(POWER_BATTERIES_DELAY / portTICK_PERIOD_MS);
+  }
+}
 
 /*--------------- MPTT TASK ---------------*/
 

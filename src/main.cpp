@@ -9,6 +9,7 @@ void setup() {
 
   // xTaskCreate(Tracking, "Update Angle", 2048, NULL, 1, NULL);
   // xTaskCreate(Database, "Send Data", 2048, NULL, 1, NULL);
+  xTaskCreate(PowerBatteries, "Control batteries power", 2048, NULL, 1, NULL);
   xTaskCreate(MPPT, "MPPT Algorithm", 2048, NULL, 1, NULL);
 }
 

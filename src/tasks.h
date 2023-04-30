@@ -12,5 +12,5 @@
 
 void Tracking(void *pvParameters);
 void Database(void *pvParameters);
-// void PowerBatteries(void *pvParameters);
+void PowerBatteries(void *pvParameters);
 void MPPT(void *pvParameters);
