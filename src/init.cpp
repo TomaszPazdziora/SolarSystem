@@ -1,14 +1,22 @@
 #include "init.h"
 
+// WIFI VARIABLES
 const char* ssid =        "";
 const char* password =    "";
 const char* url =         "";
 const char* url_time =    "";
 const char* url_measure = "";
 
+// TRACKING VARIABLES
 // const int stepsPerResolution = 360;
 // const int stepperSpeed = 10;
 // Stepper azimStepper(stepsPerResolution, 16, 18, 17, 19);
+
+// PWM VARIABLES
+const int PWM_Pin = 13; 
+const int PWM_freq = 5000;
+const int PWM_channel = 0;
+const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
 
 
 
@@ -60,4 +68,12 @@ void sendToServer(int measurement) {
 
     http.end();
   }
+}
+
+
+void testPWM() {
+  for(int dutyCycle = 0; dutyCycle <= 255; dutyCycle++){ 
+      ledcWrite(PWM_channel, dutyCycle);
+      vTaskDelay(10 / portTICK_PERIOD_MS);
+    }
 }

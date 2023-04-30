@@ -1,5 +1,6 @@
 #include "tasks.h"
 
+
 /*--------------- TRACKING TASK ---------------*/
 
 void Tracking(void *pvParameters) {
@@ -29,17 +30,17 @@ void Database(void *pvParameters) {
 
 //   for(;;) {
 
-//   vTaskDelay(POWER_BATTERIES_DELAY / portTICK_PERIOD_MS);
+//    vTaskDelay(POWER_BATTERIES_DELAY / portTICK_PERIOD_MS);
 //   }
 // }
 
 
 /*--------------- MPTT TASK ---------------*/
 
-// void MPPT(void *pvParameters) {
+void MPPT(void *pvParameters) {
   
-//   for(;;) {
-
-//   vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
-//   }
-// }
+  for(;;) {
+    testPWM();
+    vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
+  }
+}
