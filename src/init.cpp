@@ -15,13 +15,18 @@ const char* url_measure = "";
 
 
 // BATTERIES VARIABLES
-const int BatVolt_Pin = 35;
+const int BatVolt_Pin =     35;
+const int BMS_enable_Pin =  4;
+const int abortDelay =      10;
+const float abortBound =    5;
+const float lowerBound =    7.5;
+const float higherBound =   8;
 
 
 // MPPT VARIABLES
-const int PWM_Pin = 13; 
-const int PWM_freq = 5000;
-const int PWM_channel = 0;
+const int PWM_Pin =        13; 
+const int PWM_freq =       5000;
+const int PWM_channel =    0;
 const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
 
 
@@ -77,6 +82,13 @@ void sendToServer(int measurement) {
 
 
 /*--------------- BATTERIES FUNCTIONS ---------------*/
+
+void abort() {
+  Serial.println("Voltage is to low! Abort");
+  esp_sleep_enable_timer_wakeup(abortDelay * 1000000); // sleep for minute TO CHANGE
+  esp_deep_sleep_start();
+}
+
 
 float measureBatsVolt() {
   return (analogRead(BatVolt_Pin) * 3.3) / 4095;

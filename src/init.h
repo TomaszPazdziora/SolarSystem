@@ -25,6 +25,12 @@ void sendToServer(int measurement);
 
 // BATTERIES 
 extern const int BatVolt_Pin;
+extern const int BMS_enable_Pin;
+extern const float abortBound;
+extern const int abortDelay;
+extern const float lowerBound;
+extern const float higherBound;
+void abort();
 float measureBatsVolt();
 
 

@@ -27,6 +27,15 @@ void PowerBatteries(void *pvParameters) {
   float voltage = 0;
   for(;;) {
     voltage = measureBatsVolt();
+
+    if (voltage < abortBound) abort();
+    else {
+      if (voltage < lowerBound) digitalWrite(BMS_enable_Pin, HIGH);
+      else {
+        if (voltage > higherBound) digitalWrite(BMS_enable_Pin, LOW);
+      }
+    }
+
     Serial.println(voltage);
     vTaskDelay(POWER_BATTERIES_DELAY / portTICK_PERIOD_MS);
   }
