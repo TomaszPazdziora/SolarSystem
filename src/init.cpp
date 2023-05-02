@@ -32,8 +32,11 @@ const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
 
 /*--------------- TRACKING FUNCTIONS ---------------*/
 
-int getAngle(){
-  int receivedAngle = 0;
+TrackerPosition getAngle() {
+  TrackerPosition newAngle;
+  String azimuth;
+  String altitude;
+  int blancSpace;
 
   if ((WiFi.status() == WL_CONNECTED)) { 
     HTTPClient http;
@@ -42,8 +45,10 @@ int getAngle(){
     int httpCode = http.GET();                                        
   
     if (httpCode > 0) {
-        receivedAngle = http.getString().toInt();
-        Serial.println(receivedAngle);
+        azimuth = http.getString();
+        blancSpace = azimuth.indexOf(' ');
+        altitude = azimuth.substring(blancSpace);
+        azimuth.remove(blancSpace, azimuth.length());
       }
 
     else {
@@ -52,7 +57,12 @@ int getAngle(){
 
     http.end();
   }
-  return receivedAngle;
+
+  newAngle.azimuth = azimuth.toInt();
+  newAngle.altitude = altitude.toInt();
+  Serial.println(newAngle.azimuth);
+  Serial.println(newAngle.altitude);
+  return newAngle;
 }
 
 

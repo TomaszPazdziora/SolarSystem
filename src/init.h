@@ -16,7 +16,11 @@ extern const char* url_measure;
 // extern const int stepsPerResolution;
 // extern const int stepperSpeed;
 // extern Stepper azimStepper;
-int getAngle();
+struct TrackerPosition {
+  int azimuth;
+  int altitude;
+};
+TrackerPosition getAngle();
 
 
 // DATABASE
