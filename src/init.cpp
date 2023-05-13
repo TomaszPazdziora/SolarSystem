@@ -28,6 +28,9 @@ const int PWM_Pin =        13;
 const int PWM_freq =       5000;
 const int PWM_channel =    0;
 const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
+const int PWM_step =       5;
+float panelPower =         0;
+int PWM_actualDuty =       0;
 
 
 /*--------------- TRACKING FUNCTIONS ---------------*/
@@ -68,7 +71,7 @@ TrackerPosition getAngle() {
 
 /*--------------- DATABASE FUNCTIONS ---------------*/
 
-void sendToServer(int measurement) {
+void sendToServer(float measurement) {
   
   if (WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
@@ -112,4 +115,33 @@ void testPWM() {
       ledcWrite(PWM_channel, dutyCycle);
       vTaskDelay(10 / portTICK_PERIOD_MS);
     }
+}
+
+
+float measurePower() {
+  float measurement;
+  // TO IMPLEMENT
+  return measurement;
+}
+
+
+void calibratePP() {
+  PWM_actualDuty = 255;
+  float lowerDutyPower = 0;
+
+  while (PWM_actualDuty > 0) {
+    // measure actual power
+    ledcWrite(PWM_channel, PWM_actualDuty);
+    panelPower = measurePower();
+
+    // set lower PWM and measure
+    PWM_actualDuty -= PWM_step;
+    ledcWrite(PWM_channel, PWM_actualDuty);
+    lowerDutyPower = measurePower();
+
+    if (panelPower > lowerDutyPower) {
+      // calibrated = true;
+      break;
+    }
+  }
 }

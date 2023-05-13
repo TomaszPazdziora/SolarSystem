@@ -24,7 +24,7 @@ TrackerPosition getAngle();
 
 
 // DATABASE
-void sendToServer(int measurement);
+void sendToServer(float measurement);
 
 
 // BATTERIES 
@@ -43,4 +43,11 @@ extern const int PWM_Pin;
 extern const int PWM_freq;
 extern const int PWM_channel;
 extern const int PWM_resolution;
+
+extern int PWM_actualDuty;
+extern float panelPower;
+extern const int PWM_step;
+
 void testPWM();
+float measurePower();
+void calibratePP();

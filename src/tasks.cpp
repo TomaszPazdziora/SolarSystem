@@ -13,10 +13,10 @@ void Tracking(void *pvParameters) {
 /*--------------- DATABASE TASK ---------------*/
 
 void Database(void *pvParameters) {
-  int measurment = 1;
+  float measurment = 1.4;
   for (;;) {
     sendToServer(measurment);
-    measurment++;
+    measurment += 0.3;
     vTaskDelay(DATABASE_DELAY / portTICK_PERIOD_MS);
   }
 }
