@@ -1,5 +1,6 @@
 #include "tasks.h"
 
+
 /*--------------- TRACKING TASK ---------------*/
 
 void Tracking(void *pvParameters) {
@@ -13,10 +14,16 @@ void Tracking(void *pvParameters) {
 /*--------------- DATABASE TASK ---------------*/
 
 void Database(void *pvParameters) {
-  float measurment = 1.4;
   for (;;) {
-    sendToServer(measurment);
-    measurment += 0.3;
+
+    xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
+    Serial.println("Send lock mutex");
+
+    sendToServer(panelPower);
+
+    Serial.println("Send unlock mutex");
+    xSemaphoreGive(PanelPowerMutex);
+    
     vTaskDelay(DATABASE_DELAY / portTICK_PERIOD_MS);
   }
 }

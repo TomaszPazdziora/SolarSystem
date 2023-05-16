@@ -2,9 +2,9 @@
 
 // all delays will be changed
 #define TRACKING_DELAY 1000 * 30
-#define DATABASE_DELAY 1000 * 15
+#define DATABASE_DELAY 1000 * 4
 #define POWER_BATTERIES_DELAY 1000 * 10
-#define MPPT_DELAY 1000 * 1
+#define MPPT_DELAY 1000 * 2
 
 // extern int receivedAngle;
 

@@ -3,6 +3,14 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <string>
+#include <mutex>
+
+
+// CONCURRENT
+extern TaskHandle_t DatabaseHandler;
+extern TaskHandle_t MPPTHandler;
+extern SemaphoreHandle_t PanelPowerMutex;
+
 
 // WIFI 
 extern const char* ssid;

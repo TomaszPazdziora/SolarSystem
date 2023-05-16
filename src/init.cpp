@@ -1,10 +1,15 @@
 #include "init.h"
 
+// CONCURRENT VARIABLES
+TaskHandle_t DatabaseHandler;
+TaskHandle_t MPPTHandler;
+SemaphoreHandle_t PanelPowerMutex;
+
 // WIFI VARIABLES
 const char* ssid =        "";
 const char* password =    "";
 const char* url =         "";
-const char* url_time =    "";
+const char* url_angle =   "";
 const char* url_measure = "";
 
 
@@ -44,7 +49,7 @@ TrackerPosition getAngle() {
   if ((WiFi.status() == WL_CONNECTED)) { 
     HTTPClient http;
 
-    http.begin(url_time);
+    http.begin(url_angle);
     int httpCode = http.GET();                                        
   
     if (httpCode > 0) {
@@ -111,10 +116,20 @@ float measureBatsVolt() {
 /*--------------- MPPT FUNCTIONS ---------------*/
 
 void testPWM() {
-  for(int dutyCycle = 0; dutyCycle <= 255; dutyCycle++){ 
-      ledcWrite(PWM_channel, dutyCycle);
-      vTaskDelay(10 / portTICK_PERIOD_MS);
-    }
+  
+
+  for(int PWM_actualDuty = 0; PWM_actualDuty <= 255; PWM_actualDuty++) { 
+    xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
+    Serial.println("Test PWM lock mutex");
+
+    panelPower = PWM_actualDuty;
+    ledcWrite(PWM_channel, PWM_actualDuty);
+
+    Serial.println("Test PWM unlock mutex");
+    xSemaphoreGive(PanelPowerMutex);
+
+    vTaskDelay(1000 / portTICK_PERIOD_MS);
+  }
 }
 
 
