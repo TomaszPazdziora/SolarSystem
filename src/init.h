@@ -4,6 +4,7 @@
 #include <HTTPClient.h>
 #include <string>
 #include <mutex>
+#include <Adafruit_INA219.h>
 
 
 // CONCURRENT
@@ -36,6 +37,7 @@ void sendToServer(float measurement);
 
 
 // BATTERIES 
+extern Adafruit_INA219 ina219;
 extern const int BatVolt_Pin;
 extern const int BMS_enable_Pin;
 extern const float abortBound;

@@ -20,6 +20,7 @@ const char* url_measure = "";
 
 
 // BATTERIES VARIABLES
+Adafruit_INA219 ina219;
 const int BatVolt_Pin =     35;
 const int BMS_enable_Pin =  4;
 const int abortDelay =      10;
@@ -117,15 +118,14 @@ float measureBatsVolt() {
 
 void testPWM() {
   
-
   for(int PWM_actualDuty = 0; PWM_actualDuty <= 255; PWM_actualDuty++) { 
     xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
-    Serial.println("Test PWM lock mutex");
 
-    panelPower = PWM_actualDuty;
+    panelPower = measurePower();
+    Serial.println("Diode power: ");
+    Serial.println(panelPower);
     ledcWrite(PWM_channel, PWM_actualDuty);
 
-    Serial.println("Test PWM unlock mutex");
     xSemaphoreGive(PanelPowerMutex);
 
     vTaskDelay(1000 / portTICK_PERIOD_MS);
@@ -134,9 +134,7 @@ void testPWM() {
 
 
 float measurePower() {
-  float measurement;
-  // TO IMPLEMENT
-  return measurement;
+  return ina219.getPower_mW();
 }
 
 
