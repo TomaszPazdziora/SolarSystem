@@ -52,8 +52,10 @@ void PowerBatteries(void *pvParameters) {
 
 void MPPT(void *pvParameters) {
   
+  calibratePP();
+
   for(;;) {
-    testPWM();
-    vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
+    findPP();
+    // vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
   }
 }

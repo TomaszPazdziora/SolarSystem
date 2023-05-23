@@ -31,7 +31,7 @@ const float higherBound =   8;
 
 // MPPT VARIABLES
 const int PWM_Pin =        13; 
-const int PWM_freq =       5000;
+const int PWM_freq =       100000; // 100k 
 const int PWM_channel =    0;
 const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
 const int PWM_step =       5;
@@ -116,25 +116,12 @@ float measureBatsVolt() {
 
 /*--------------- MPPT FUNCTIONS ---------------*/
 
-void testPWM() {
-  
-  for(int PWM_actualDuty = 0; PWM_actualDuty <= 255; PWM_actualDuty++) { 
-    xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
-
-    panelPower = measurePower();
-    Serial.println("Diode power: ");
-    Serial.println(panelPower);
-    ledcWrite(PWM_channel, PWM_actualDuty);
-
-    xSemaphoreGive(PanelPowerMutex);
-
-    vTaskDelay(1000 / portTICK_PERIOD_MS);
-  }
-}
-
-
 float measurePower() {
-  return ina219.getPower_mW();
+  xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
+  float power = ina219.getPower_mW();
+  xSemaphoreGive(PanelPowerMutex);
+
+  return power;
 }
 
 
@@ -157,4 +144,27 @@ void calibratePP() {
       break;
     }
   }
+}
+
+
+void findPP() {
+  float powerBuffer = 0;
+
+  ledcWrite(PWM_channel, PWM_actualDuty);
+  vTaskDelay(MEASURE_DELAY / portTICK_PERIOD_MS);
+  panelPower = measurePower();
+  
+  ledcWrite(PWM_channel, PWM_actualDuty - PWM_step);
+  vTaskDelay(MEASURE_DELAY / portTICK_PERIOD_MS);
+  powerBuffer = measurePower();
+  
+  if (powerBuffer > panelPower) {
+    PWM_actualDuty -= PWM_step;
+    return;
+  }
+
+  ledcWrite(PWM_channel, PWM_actualDuty + PWM_step);
+  vTaskDelay(MEASURE_DELAY / portTICK_PERIOD_MS);
+  powerBuffer = measurePower();
+  if (powerBuffer > panelPower) PWM_actualDuty += PWM_step;
 }

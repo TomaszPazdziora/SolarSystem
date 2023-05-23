@@ -11,6 +11,7 @@ void setup() {
   ina219.begin();
   
   PanelPowerMutex = xSemaphoreCreateMutex();
+  
   xTaskCreate(Tracking, "Update Angle", 2048, NULL, 1, NULL);
   xTaskCreate(Database, "Send Data", 4096, NULL, 1, &DatabaseHandler);
   // xTaskCreate(PowerBatteries, "Control batteries power", 2048, NULL, 1, NULL);

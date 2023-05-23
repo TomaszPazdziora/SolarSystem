@@ -49,6 +49,7 @@ float measureBatsVolt();
 
 
 // MPPT
+#define MEASURE_DELAY 500
 extern const int PWM_Pin; 
 extern const int PWM_freq;
 extern const int PWM_channel;
@@ -61,3 +62,4 @@ extern const int PWM_step;
 void testPWM();
 float measurePower();
 void calibratePP();
+void findPP();
