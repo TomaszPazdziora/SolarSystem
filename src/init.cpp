@@ -30,8 +30,6 @@ const int   daylight_offset_sec = 3600;
 
 // BATTERIES VARIABLES
 Adafruit_INA219 ina219;
-const int BatVolt_Pin =     35;
-const int BMS_enable_Pin =  4;
 const int abortDelay =      10;
 const float abortBound =    5;
 const float lowerBound =    7.5;
@@ -39,7 +37,6 @@ const float higherBound =   8;
 
 
 // MPPT VARIABLES
-const int PWM_Pin =        13; 
 const int PWM_freq =       100000; // 100k 
 const int PWM_channel =    0;
 const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255

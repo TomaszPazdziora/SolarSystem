@@ -5,6 +5,7 @@
 #include <string>
 #include <mutex>
 #include <Adafruit_INA219.h>
+#include "peripherals.h"
 
 
 // CONCURRENT
@@ -43,9 +44,7 @@ void sendToServer(float measurement);
 
 
 // BATTERIES 
-extern Adafruit_INA219 ina219;
-extern const int BatVolt_Pin;
-extern const int BMS_enable_Pin;
+
 extern const float abortBound;
 extern const int abortDelay;
 extern const float lowerBound;
@@ -56,7 +55,7 @@ float measureBatsVolt();
 
 // MPPT
 #define MEASURE_DELAY 500
-extern const int PWM_Pin; 
+extern Adafruit_INA219 ina219;
 extern const int PWM_freq;
 extern const int PWM_channel;
 extern const int PWM_resolution;

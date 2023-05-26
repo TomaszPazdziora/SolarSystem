@@ -11,6 +11,7 @@ void setup() {
    
   ledcSetup(PWM_channel, PWM_freq, PWM_resolution);
   ledcAttachPin(PWM_Pin, PWM_channel);
+  
   ina219.begin();
   
   PanelPowerMutex = xSemaphoreCreateMutex();
