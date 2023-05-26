@@ -17,12 +17,10 @@ void Database(void *pvParameters) {
   for (;;) {
 
     xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
-    Serial.println("Send lock mutex");
-
     sendToServer(panelPower);
-
-    Serial.println("Send unlock mutex");
     xSemaphoreGive(PanelPowerMutex);
+    
+    printLocalTime();
     
     vTaskDelay(DATABASE_DELAY / portTICK_PERIOD_MS);
   }
@@ -56,6 +54,6 @@ void MPPT(void *pvParameters) {
 
   for(;;) {
     findPP();
-    // vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
+    vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
   }
 }

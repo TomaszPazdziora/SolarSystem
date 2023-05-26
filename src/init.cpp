@@ -13,6 +13,15 @@ const char* url_angle =   "";
 const char* url_measure = "";
 
 
+// TIME VARIABLES
+#define SLEEP_TIME 22
+#define SLEEP_HOUR_DELAY 6
+
+const char* ntp_server = "pool.ntp.org";
+const long  gmt_offset_sec = 3600;
+const int   daylight_offset_sec = 3600;
+
+
 // TRACKING VARIABLES
 // const int stepsPerResolution = 360;
 // const int stepperSpeed = 10;
@@ -37,6 +46,24 @@ const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
 const int PWM_step =       5;
 float panelPower =         0;
 int PWM_actualDuty =       0;
+
+
+/*--------------- TIME MEASUREMENT FUNCTIONS ---------------*/
+
+void printLocalTime() {
+  struct tm timeinfo;
+
+  if(!getLocalTime(&timeinfo)) {
+    Serial.println("Failed to obtain time");
+    return;
+  }
+  Serial.println(&timeinfo, "%A, %B %d %Y %H:%M:%S");
+
+  if (timeinfo.tm_hour > SLEEP_TIME) {
+    esp_sleep_enable_timer_wakeup(SLEEP_HOUR_DELAY * 60 * 1000000);
+    esp_deep_sleep_start();
+  }
+}
 
 
 /*--------------- TRACKING FUNCTIONS ---------------*/
@@ -118,7 +145,8 @@ float measureBatsVolt() {
 
 float measurePower() {
   xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
-  float power = ina219.getPower_mW();
+  // float power = ina219.getPower_mW();
+  float power = 5;
   xSemaphoreGive(PanelPowerMutex);
 
   return power;
@@ -148,6 +176,7 @@ void calibratePP() {
 
 
 void findPP() {
+  Serial.println(".");
   float powerBuffer = 0;
 
   ledcWrite(PWM_channel, PWM_actualDuty);

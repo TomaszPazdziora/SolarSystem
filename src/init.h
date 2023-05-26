@@ -20,6 +20,12 @@ extern const char* url;
 extern const char* url_time;
 extern const char* url_measure;
 
+extern const char* ntp_server;
+extern const long  gmt_offset_sec;
+extern const int   daylight_offset_sec;
+
+void printLocalTime();
+
 
 // TRACKING 
 // extern const int stepsPerResolution;
