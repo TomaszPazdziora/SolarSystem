@@ -22,10 +22,11 @@ const long  gmt_offset_sec = 3600;
 const int   daylight_offset_sec = 3600;
 
 
-// TRACKING VARIABLES
-// const int stepsPerResolution = 360;
-// const int stepperSpeed = 10;
-// Stepper azimStepper(stepsPerResolution, 16, 18, 17, 19);
+//TRACKING VARIABLES
+const int stepsPerResolution = 360;
+const int stepperSpeed = 10;
+Stepper altitudeStepper(stepsPerResolution, StepperPion1_Pin1, StepperPion1_Pin3,
+                                            StepperPion1_Pin2, StepperPion1_Pin4);                                     
 
 
 // BATTERIES VARIABLES
@@ -93,8 +94,15 @@ TrackerPosition getAngle() {
 
   newAngle.azimuth = azimuth.toInt();
   newAngle.altitude = altitude.toInt();
-  Serial.println(newAngle.azimuth);
-  Serial.println(newAngle.altitude);
+  Serial.println("Azimuth:  " + newAngle.azimuth);
+  Serial.println("Altitude: " + newAngle.altitude);
+
+  // move at read angle
+  Serial.println("Move altitude motor");
+  altitudeStepper.setSpeed(stepperSpeed);
+  altitudeStepper.step(newAngle.altitude);
+  vTaskDelay(100);
+
   return newAngle;
 }
 
@@ -173,7 +181,7 @@ void calibratePP() {
 
 
 void findPP() {
-  Serial.println(".");
+  Serial.println("PP");
   float powerBuffer = 0;
 
   ledcWrite(PWM_channel, PWM_actualDuty);
@@ -192,5 +200,6 @@ void findPP() {
   ledcWrite(PWM_channel, PWM_actualDuty + PWM_step);
   vTaskDelay(MEASURE_DELAY / portTICK_PERIOD_MS);
   powerBuffer = measurePower();
+
   if (powerBuffer > panelPower) PWM_actualDuty += PWM_step;
 }
