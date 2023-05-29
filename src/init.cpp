@@ -1,19 +1,29 @@
 #include "init.h"
 
-// CONCURRENT VARIABLES
+/*==============================================*/
+/*                   CONCURRENT                 */
+/*==============================================*/
+
 TaskHandle_t DatabaseHandler;
 TaskHandle_t MPPTHandler;
 SemaphoreHandle_t PanelPowerMutex;
 
-// WIFI VARIABLES
+
+/*==============================================*/
+/*                    WI-FI                     */
+/*==============================================*/
+
 const char* ssid =        "";
 const char* password =    "";
 const char* url =         "";
-const char* url_angle =   "";
-const char* url_measure = "";
+const char* url_angle =   "/angle";
+const char* url_measure = "/measurements";
 
 
-// TIME VARIABLES
+/*==============================================*/
+/*               TIME MEASUREMENT               */
+/*==============================================*/
+
 #define SLEEP_TIME 22
 #define SLEEP_HOUR_DELAY 6
 
@@ -21,32 +31,6 @@ const char* ntp_server = "pool.ntp.org";
 const long  gmt_offset_sec = 3600;
 const int   daylight_offset_sec = 3600;
 
-
-//TRACKING VARIABLES
-const int stepsPerResolution = 360;
-const int stepperSpeed = 10;
-Stepper altitudeStepper(stepsPerResolution, StepperPion1_Pin1, StepperPion1_Pin3,
-                                            StepperPion1_Pin2, StepperPion1_Pin4);                                     
-
-
-// BATTERIES VARIABLES
-Adafruit_INA219 ina219;
-const int abortDelay =      10;
-const float abortBound =    5;
-const float lowerBound =    7.5;
-const float higherBound =   8;
-
-
-// MPPT VARIABLES
-const int PWM_freq =       100000; // 100k 
-const int PWM_channel =    0;
-const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
-const int PWM_step =       5;
-float panelPower =         0;
-int PWM_actualDuty =       0;
-
-
-/*--------------- TIME MEASUREMENT FUNCTIONS ---------------*/
 
 void printLocalTime() {
   struct tm timeinfo;
@@ -64,7 +48,17 @@ void printLocalTime() {
 }
 
 
-/*--------------- TRACKING FUNCTIONS ---------------*/
+/*==============================================*/
+/*                    TRACKING                  */
+/*==============================================*/
+
+const int stepsPerResolution = 360;
+const int stepperSpeed = 10;
+Stepper azimuthStepper(stepsPerResolution,  StepperPoz_Pin1, StepperPoz_Pin3,
+                                            StepperPoz_Pin2, StepperPoz_Pin4);   
+
+Stepper altitudeStepper(stepsPerResolution, StepperPion1_Pin1, StepperPion1_Pin3,
+                                            StepperPion1_Pin2, StepperPion1_Pin4);
 
 TrackerPosition getAngle() {
   TrackerPosition newAngle;
@@ -94,20 +88,26 @@ TrackerPosition getAngle() {
 
   newAngle.azimuth = azimuth.toInt();
   newAngle.altitude = altitude.toInt();
-  Serial.println("Azimuth:  " + newAngle.azimuth);
-  Serial.println("Altitude: " + newAngle.altitude);
+  Serial.println(newAngle.azimuth);
+  Serial.println(newAngle.altitude);
 
-  // move at read angle
+  // test move 
   Serial.println("Move altitude motor");
   altitudeStepper.setSpeed(stepperSpeed);
-  altitudeStepper.step(newAngle.altitude);
+  altitudeStepper.step(stepsPerResolution);
+  vTaskDelay(100);
+  Serial.println("Move altitude motor");
+  altitudeStepper.setSpeed(stepperSpeed);
+  altitudeStepper.step(stepsPerResolution);
   vTaskDelay(100);
 
   return newAngle;
 }
 
 
-/*--------------- DATABASE FUNCTIONS ---------------*/
+/*==============================================*/
+/*                    DATABASE                  */
+/*==============================================*/
 
 void sendToServer(float measurement) {
   
@@ -132,7 +132,16 @@ void sendToServer(float measurement) {
 }
 
 
-/*--------------- BATTERIES FUNCTIONS ---------------*/
+/*==============================================*/
+/*                    BATTERIES                 */
+/*==============================================*/
+
+Adafruit_INA219 ina219;
+const int abortDelay =      10;
+const float abortBound =    5;
+const float lowerBound =    7.5;
+const float higherBound =   8;
+
 
 void abort() {
   Serial.println("Voltage is to low! Abort");
@@ -146,12 +155,21 @@ float measureBatsVolt() {
 }
 
 
-/*--------------- MPPT FUNCTIONS ---------------*/
+/*==============================================*/
+/*                      MPPT                    */
+/*==============================================*/
+
+const int PWM_freq =       75000; // 100k 
+const int PWM_channel =    0;
+const int PWM_resolution = 8; // 8 bit pwm - from 0 to 255
+const int PWM_step =       5;
+float panelPower =         0;
+int PWM_actualDuty =       0;
+
 
 float measurePower() {
   xSemaphoreTake(PanelPowerMutex, portMAX_DELAY);
-  // float power = ina219.getPower_mW();
-  float power = 5;
+  float power = ina219.getPower_mW();
   xSemaphoreGive(PanelPowerMutex);
 
   return power;
@@ -202,4 +220,5 @@ void findPP() {
   powerBuffer = measurePower();
 
   if (powerBuffer > panelPower) PWM_actualDuty += PWM_step;
+  
 }

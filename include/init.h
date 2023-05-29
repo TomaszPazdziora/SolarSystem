@@ -29,9 +29,9 @@ void printLocalTime();
 
 
 // TRACKING 
-// extern const int stepsPerResolution;
-// extern const int stepperSpeed;
-// extern Stepper azimStepper;
+extern const int stepsPerResolution;
+extern const int stepperSpeed;
+extern Stepper azimStepper;
 struct TrackerPosition {
   int azimuth;
   int altitude;

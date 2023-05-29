@@ -1,7 +1,8 @@
 #include "tasks.h"
 
-
-/*--------------- TRACKING TASK ---------------*/
+/*==============================================*/
+/*                 TRACKING TASK                */
+/*==============================================*/
 
 void Tracking(void *pvParameters) {
   int receivedAngle = 0;
@@ -11,7 +12,10 @@ void Tracking(void *pvParameters) {
   }
 }
 
-/*--------------- DATABASE TASK ---------------*/
+
+/*==============================================*/
+/*                  DATABASE TASK               */
+/*==============================================*/
 
 void Database(void *pvParameters) {
   for (;;) {
@@ -26,7 +30,10 @@ void Database(void *pvParameters) {
   }
 }
 
-/*--------------- POWER BATTERIES TASK ---------------*/
+
+/*==============================================*/
+/*              POWER BATTERIES TASK            */
+/*==============================================*/
 
 void PowerBatteries(void *pvParameters) {
   float voltage = 0;
@@ -46,14 +53,22 @@ void PowerBatteries(void *pvParameters) {
   }
 }
 
-/*--------------- MPTT TASK ---------------*/
+
+/*==============================================*/
+/*                    MPTT TASK                 */
+/*==============================================*/
 
 void MPPT(void *pvParameters) {
   
-  calibratePP();
+  // calibratePP();
+  PWM_actualDuty = 125;
+
 
   for(;;) {
     findPP();
+    Serial.println("Duty:");
+    Serial.println(PWM_actualDuty);
     vTaskDelay(MPPT_DELAY / portTICK_PERIOD_MS);
+
   }
 }
